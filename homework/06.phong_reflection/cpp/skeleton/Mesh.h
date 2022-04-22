@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <assimp/scene.h> 
+#include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
@@ -16,7 +16,7 @@
 #include "Material.h"
 
 struct Face
-{    
+{
     GLuint index_buffer = 0;
     GLuint num_indices = 0;
 };
@@ -29,22 +29,26 @@ public:
         : mMesh(mesh) {};
 
     void init_buffer_objects();
-    void draw(int loc_a_position, int loc_a_normal); 
+    void draw(int loc_a_position, int loc_a_normal,int loc_a_texcoord);
     void print_info();
 
     void set_material(Material mat) { mMaterial = mat;}
-    
+
     Material mMaterial;
 
 private:
 
-    GLuint  position_buffer; // GPU 메모리에서 vertices_buffer 위치 
+    GLuint  position_buffer; // GPU 메모리에서 vertices_buffer 위치
     GLuint  color_buffer;    // GPU 메모리에서 color_buffer 위치
     GLuint  normal_buffer;
+    GLuint index_buffer;
+    int num_indices=0;
     bool    is_color = false;
 
     std::vector<Face> faces;
-    
+
     const aiMesh* mMesh;
+
+    GLuint  texcoord_buffer;    // GPU 메모리에서 color_buffer 위치
 
 };

@@ -1,17 +1,93 @@
 #include "Mesh.h"
 
-void Mesh::init_buffer_objects() 
+void Mesh::init_buffer_objects()
 {
     // TODO : initialize position, normal, index buffer
+
+//
+    glGenBuffers(1, &texcoord_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, texcoord_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(mMesh->mTextureCoords[0][0])*mMesh->mNumVertices, &mMesh->mTextureCoords[0][0].x, GL_STATIC_DRAW);
+
+
     // use your code from the previous assignment
+    glGenBuffers(1, &position_buffer);
+  glGenBuffers(1, &normal_buffer);
+  glGenBuffers(1, &index_buffer);
+
+  int j=0;
+
+    // TODO
+
+    std::vector<GLfloat> position;
+    std::vector<GLfloat> normals;
+    std::vector<GLuint> idx;
+
+    for (int i = 0; i < mMesh->mNumVertices; ++i)
+    {
+        aiVector3D vertex = mMesh->mVertices[i];
+
+        position.push_back(vertex.x);
+        position.push_back(vertex.y);
+        position.push_back(vertex.z);
+
+
+        aiVector3D normal= mMesh->mNormals[i];
+        normals.push_back(normal.x);
+        normals.push_back(normal.y);
+        normals.push_back(normal.z);
+    }
+
+    for(int i=0; i<mMesh->mNumFaces;i++){
+      aiFace face=mMesh->mFaces[i];
+      for(int j=0; j<face.mNumIndices; j++){
+        idx.push_back(face.mIndices[j]);
+        num_indices++;
+      }
+    }
+
+
+
+      glBindBuffer(GL_ARRAY_BUFFER, position_buffer);
+      glBufferData(GL_ARRAY_BUFFER,position.size()*sizeof(GLfloat)  ,&position[0], GL_STATIC_DRAW);
+
+
+      glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
+      glBufferData(GL_ARRAY_BUFFER,normals.size()*sizeof(GLfloat),&normals[0], GL_STATIC_DRAW);
+
+//normal_buffer
+
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+      glBufferData(GL_ELEMENT_ARRAY_BUFFER, idx.size()*sizeof(GLuint),&idx[0], GL_STATIC_DRAW);
+
 }
 
-void Mesh::draw(int loc_a_position, int loc_a_normal)
+void Mesh::draw(int loc_a_position, int loc_a_normal,int loc_a_texcoord)
 {
+  //
+    glBindBuffer(GL_ARRAY_BUFFER, texcoord_buffer);
+    glEnableVertexAttribArray(loc_a_texcoord);
+    glVertexAttribPointer(loc_a_texcoord, 2, GL_FLOAT, GL_FALSE, 12, (void*)0);
+    
     // TODO : draw a mesh
     // use your code from the previous assignment
+    glBindBuffer(GL_ARRAY_BUFFER, position_buffer);
+      glEnableVertexAttribArray(loc_a_position);
+      glVertexAttribPointer(loc_a_position, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+      glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
+      glEnableVertexAttribArray(loc_a_normal);
+      glVertexAttribPointer(loc_a_normal, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+      glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, (void*)0);
+
+      glDisableVertexAttribArray(loc_a_position);
+      glDisableVertexAttribArray(loc_a_normal);
+      glDisableVertexAttribArray(loc_a_texcoord);
 }
-    
+
 void Mesh::print_info()
 {
     std::cout << "print mesh info" << std::endl;

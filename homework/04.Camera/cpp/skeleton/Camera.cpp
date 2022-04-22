@@ -7,44 +7,44 @@ const glm::vec3 Camera::center_position() const
                position_[2] + front_dir_[2]);
 }
 
-// TODO: fill up the following functions properly 
+// TODO: fill up the following functions properly
 const glm::mat4  Camera::get_view_matrix()
 {
-
+  return glm::lookAt(position(),center_position(),up_direction());
 }
 
 void Camera::move_forward(float delta)
 {
-
+  position_ += front_direction()*delta;
 }
 
 void Camera::move_backward(float delta)
 {
-
+  position_ -= front_direction()*delta;
 }
 
 void Camera::move_left(float delta)
 {
-
+  position_ -= right_direction()*delta;
 }
 
 void Camera::move_right(float delta)
 {
-
+  position_ += right_direction()*delta;
 }
 
 void Camera::move_up(float delta)
 {
-
+  position_ += up_direction()*delta;
 }
 
 void Camera::move_down(float delta)
 {
-
+  position_ -= up_direction()*delta;
 }
 
 
 void Camera::update_front_direction(glm::vec3 dir)
 {
-
+  front_dir_=dir;
 }

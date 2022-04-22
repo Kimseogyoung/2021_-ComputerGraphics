@@ -1,0 +1,30 @@
+model [1]  models/duck.obj
+position : 0.345 -0.345 0
+scale : 0.2 0.2 0.2
+model [2]  models/Tomato.obj
+position : 1.034 -0.2 -1.333
+scale : 0.1 0.1 0.1
+model [3]  models/amongus_turbosmooth.obj
+position : 0.345 1.724 -4
+scale : 0.01 0.01 0.01
+model [4]  models/Low_poly_UFO.obj
+position : -0.3 -0.2 -10
+scale : 0.155 0.155 0.155
+model [5]  models/A2.obj
+position : 3.793 0.1 -3.333
+scale : 0.776 0.776 0.776
+model [6]  models/Obj/Gold_Star.obj
+position : 5.862 1.724 -5
+scale : 0.1 0.1 0.1
+model [7]  models/Rocket.obj
+position : -0.2 -0.345 0
+scale : 0.005 0.005 0.005
+
+camera [1]
+position : -0.00982575 -0.00952461 1.10349
+front_dir : 0.0950182 0.0952461 -0.990909
+up_dir : -0.00909144 0.995454 0.0948112
+camera [2]
+position : 0.9 0.3 0.3
+front_dir : -0.806421 -0.339238 -0.484358
+up_dir : 0 1 0

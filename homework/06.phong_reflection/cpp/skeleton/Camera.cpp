@@ -12,7 +12,7 @@ const glm::mat4  Camera::get_view_matrix()
   return glm::lookAt(position_, center_position(), up_dir_);
 }
 
-// TODO: fill up the following functions properly 
+// TODO: fill up the following functions properly
 void Camera::move_forward(float delta)
 {
   position_ += delta * front_dir_;
@@ -76,7 +76,7 @@ void Camera::rotate_y(float yaw)
 
 void Camera::update_front_direction(glm::vec3 dir)
 {
-  front_dir_ = glm::normalize(dir); 
+  front_dir_ = glm::normalize(dir);
 
   right_dir_ = glm::normalize(glm::cross(front_dir_, glm::vec3(0.0, 1.0f, 0.0f)));
   up_dir_    = glm::normalize(glm::cross(right_dir_, front_dir_));

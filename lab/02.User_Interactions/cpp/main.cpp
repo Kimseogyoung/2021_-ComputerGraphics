@@ -40,16 +40,22 @@ void set_transform();
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-/// TODO: 배경색, 와이어프레임 렌더링 모드, 애니메이션 모드, 물체 위치변수 관련 변수 
+/// TODO: 배경색, 와이어프레임 렌더링 모드, 애니메이션 모드, 물체 위치변수 관련 변수
 ////////////////////////////////////////////////////////////////////////////////
-
+float g_bg_color_r = 0.5f, g_bg_color_g = 0.5f, g_bg_color_b = 0.5f;
+// 와이어프레임 렌더링 모드 on/off 토글 변수
+bool g_is_wireframe_mode = false;
+// 애니메이션 모드 on/off 토글 변수
+bool g_is_animaiton = false;
+// 물체 위치 변수
+float g_translate_x = 0.0f, g_translate_y = 0.0f, g_translate_z = 0.0f;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// TODO: GLFW 콜백 함수
 ///       키보드 이벤트 콜백함수 선언
 ////////////////////////////////////////////////////////////////////////////////
 // 키보드 이벤트 콜백함수
-// void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -187,20 +193,57 @@ void set_transform()
   mat_proj = glm::mat4(1.0f);   // intrinsic param
 
   // TODO: 애니메이션 설정
+  if( g_is_animaiton){
+    g_translate_x+=0.1f;
+    if(g_translate_x>1.0f)
+      g_translate_x=-1.0f;
+  }
 
   // TODO: set object transformation
-  mat_model = glm::mat4(1.0f);
+  mat_model = glm::translate(glm::mat4(1.0f),glm::vec3(g_translate_x, g_translate_y, g_translate_z));
 }
 
 /////////////////////////////////////////////////////////////////////
 /// TODO: 키보드 콜백 핸들링 함수 작성 - BEGIN
 /////////////////////////////////////////////////////////////////////
 
-// void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-// {
+ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+ {
+   if(key ==GLFW_KEY_EQUAL && action ==GLFW_PRESS){
+     g_bg_color_r += 0.1f;
+     g_bg_color_g += 0.1f;
+     g_bg_color_b += 0.1f;
+     g_bg_color_r = std::min(1.0f, g_bg_color_r);
+     g_bg_color_g = std::min(1.0f, g_bg_color_g);
+     g_bg_color_b = std::min(1.0f, g_bg_color_b);
+   }
+   // -/_ key: 배경색 점점 어두워지게
+   if (key == GLFW_KEY_MINUS && action == GLFW_PRESS)
+   {
+     g_bg_color_r -= 0.1f;
+     g_bg_color_g -= 0.1f;
+     g_bg_color_b -= 0.1f;
+     g_bg_color_r = std::max(0.0f, g_bg_color_r);
+     g_bg_color_g = std::max(0.0f, g_bg_color_g);
+     g_bg_color_b = std::max(0.0f, g_bg_color_b);
+   }
+// 와이어프레임 렌더링 모드 토글링
+  if (key == GLFW_KEY_W && action == GLFW_PRESS)
+    g_is_wireframe_mode = !g_is_wireframe_mode;
+// 와이어프레임 렌더링 모드 토글링
+  if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+    g_is_animaiton = !g_is_animaiton;
+  if (key == GLFW_KEY_H &&action == GLFW_PRESS) // move -x
+    g_translate_x -= 0.1f;
+  if (key == GLFW_KEY_L &&action == GLFW_PRESS) // move -x
+    g_translate_x += 0.1f;
+  if (key == GLFW_KEY_J &&action == GLFW_PRESS) // move -x
+    g_translate_y -= 0.1f;
+  if (key == GLFW_KEY_K &&action == GLFW_PRESS) // move -x
+    g_translate_y += 0.1f;
 
-// }
 
+}
 /////////////////////////////////////////////////////////////////////
 /// TODO: 키보드 콜백 핸들링 함수 작성 - END
 /////////////////////////////////////////////////////////////////////
@@ -209,8 +252,10 @@ void set_transform()
 void render_object()
 {
   // TODO: 와이어프레임 모드 설정 처리
-
-
+  if(g_is_wireframe_mode)
+    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+  else
+  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
   // 특정 쉐이더 프로그램 사용
   glUseProgram(program);
@@ -274,7 +319,7 @@ int main(void)
   init_buffer_objects();
 
   /// TODO: 키보드 콜백함수 등록
-
+  glfwSetKeyCallback(window, key_callback);
 
   // Loop until the user closes the window
   while (!glfwWindowShouldClose(window))
@@ -284,13 +329,13 @@ int main(void)
 
     // 사용자 정의 렌더링 코드 - BEGIN
     // TODO: 업데이트된 배경색 적용
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glClearColor(g_bg_color_r, g_bg_color_g, g_bg_color_b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     set_transform();
     render_object();
     // 사용자 정의 렌더링 코드 - END
-    
+
     // Swap front and back buffers
     glfwSwapBuffers(window);
   }

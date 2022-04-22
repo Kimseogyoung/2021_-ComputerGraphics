@@ -16,7 +16,7 @@ glm::mat4 Model::get_model_matrix()
     return mat_model;
 }
 
-bool Model::init_texture_object(std::string filepath) 
+bool Model::init_texture_object(std::string filepath)
 {
     int width, height, channels;
     unsigned char* image;
@@ -32,14 +32,14 @@ bool Model::init_texture_object(std::string filepath)
     glGenTextures(1, &texid);
     glBindTexture(GL_TEXTURE_2D, texid);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
                     0, GL_RGB, GL_UNSIGNED_BYTE, image);
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);        
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); 
-    
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
     stbi_image_free(image);
 
     return true;
@@ -47,9 +47,12 @@ bool Model::init_texture_object(std::string filepath)
 
 void Model::draw(int loc_a_position,  int loc_u_diffuse_texture, int loc_a_texcoord)
 {
-    glUniform1i(loc_u_diffuse_texture, 0);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texid);   
+    if(has_texture=true){
+      glUniform1i(loc_u_diffuse_texture, 0);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, texid);
+    }
+
 
     for (int i = 0; i < mMeshes.size(); ++i)
     {
@@ -70,8 +73,8 @@ bool Model::load_model(const std::string& filename)
         mesh = Mesh(scene->mMeshes[i]);
         mesh.init_buffer_objects();
 
-        int mat_idx = scene->mMeshes[i]->mMaterialIndex;    
-        
+        int mat_idx = scene->mMeshes[i]->mMaterialIndex;
+
         mMeshes.push_back(mesh);
 
         aiString textureFilePath;
@@ -84,7 +87,7 @@ bool Model::load_model(const std::string& filename)
 
             if (!init_texture_object(fullpath))
                 return false;
-            
+
             has_texture = true;
         }
 

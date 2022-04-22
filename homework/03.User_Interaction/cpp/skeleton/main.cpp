@@ -71,10 +71,10 @@ void key_callback();
 ////////////////////////////////////////////////////////////////////////////////
 /// ImGuIZMO 관련 변수 및 함수
 ////////////////////////////////////////////////////////////////////////////////
-glm::quat qRot = quat(1.f, 0.f, 0.f, 0.f); 
+glm::quat qRot = quat(1.f, 0.f, 0.f, 0.f);
 ////////////////////////////////////////////////////////////////////////////////
 
-void init_imgui(GLFWwindow* window) 
+void init_imgui(GLFWwindow* window)
 {
   const char* glsl_version = "#version 120";
 
@@ -105,7 +105,11 @@ void compose_imgui_frame()
     ImGui::Begin("control");
 
     // TODO
-    ImGui::SliderFloat("translate", &vec_translate[0], -3.0f, 3.0f);
+    ImGui::SliderFloat3("translate", &vec_translate[0], -3.0f, 3.0f);
+    ImGui::SliderFloat3("scale", &vec_scale[0], -3.0f, 3.0f);
+    ImGui::gizmo3D("##gizmol",qRot);
+
+    mat_rot=mat4_cast(qRot);
 
     ImGui::End();
   }
@@ -113,7 +117,7 @@ void compose_imgui_frame()
   // output window
   {
     ImGui::Begin("output");
-    
+
     ImGui::TextColored(ImVec4(1,1,0,1), "current translate");
     ImGui::Text("x = %.3f, y = %.3f, z = %.3f", vec_translate[0], vec_translate[1], vec_translate[2]);
     ImGui::NewLine();
@@ -143,19 +147,26 @@ void compose_imgui_frame()
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
   // move left
-  if (key == GLFW_KEY_H && action == GLFW_PRESS) 
+  if (key == GLFW_KEY_H && action == GLFW_PRESS)
     vec_translate[0] -= 0.1f;
   // mode right
   if (key == GLFW_KEY_L && action == GLFW_PRESS)
     vec_translate[0] += 0.1f;
-  
+
   // TODO
+  if (key == GLFW_KEY_K && action == GLFW_PRESS)
+    vec_translate[1] += 0.1f;
+  // mode right
+  if (key == GLFW_KEY_J && action == GLFW_PRESS)
+    vec_translate[1] -= 0.1f;
 
   // scale
   if (key == GLFW_KEY_EQUAL && action == GLFW_PRESS)
     vec_scale += 0.1f;
-  
+
   // TODO
+  if (key == GLFW_KEY_MINUS && action == GLFW_PRESS)
+    vec_scale -= 0.1f;
 }
 
 
@@ -265,21 +276,24 @@ void init_buffer_objects()
   glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(avocado::vlist::color), avocado::vlist::color, GL_STATIC_DRAW);
 
-  // IBO 
+  // IBO
   glGenBuffers(1, &index_buffer);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(avocado::vlist::index), avocado::vlist::index, GL_STATIC_DRAW);
 }
 
-void set_transform() 
+void set_transform()
 {
   mat_view = glm::mat4(1.0f);
-  mat_proj = glm::mat4(1.0f); 
+  mat_proj = glm::mat4(1.0f);
   mat_model = glm::mat4(1.0f);
 
   // TODO
   mat_model = mat_model * glm::scale(glm::mat4(1.0f), vec_scale);
   mat_model = mat_model * glm::translate(vec_translate);
+  //mat_model = mat_model * mat4_cast(qRot);
+  mat_model = mat_model*mat_rot;
+
 }
 
 

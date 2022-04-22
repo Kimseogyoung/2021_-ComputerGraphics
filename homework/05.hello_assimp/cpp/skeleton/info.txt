@@ -1,10 +1,13 @@
-2
+3
 models/avocado.ply
 0.2
 -0.2 0.0 0.0
 models/bunny.ply
 0.5
 0.2 -0.2 -0.4
+models/face.ply
+0.2
+-2.0 0.2 -1.0
 2
 0.0 0.0 1.0
 0.0 0.0 -1.0

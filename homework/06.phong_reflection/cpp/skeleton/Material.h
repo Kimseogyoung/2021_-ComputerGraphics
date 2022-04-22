@@ -7,7 +7,7 @@
 class Material
 {
 public:
-    Material() 
+    Material()
     :   ambient(0.1f),
         diffuse(1.0f),
         specular(1.0f),

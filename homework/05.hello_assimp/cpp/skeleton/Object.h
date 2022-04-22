@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <assimp/scene.h> 
+#include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
@@ -14,15 +14,14 @@
 #include <iostream>
 
 struct Face
-{    
+{
     GLuint index_buffer = 0;
     GLuint num_indices = 0;
 };
-
 class Object
 {
 public:
-    Object() 
+    Object()
         : vec_translate(0.0),
           vec_scale(1.0),
           mat_rotate(1.0) {};
@@ -39,17 +38,23 @@ public:
     void      set_translate(glm::vec3 vec)  { vec_translate = vec; }
     void      set_scale(glm::vec3 vec) { vec_scale = vec; }
     void      set_rotate(glm::mat4 mat) { mat_rotate = mat; }
+    void      set_name(std::string s) {
+      name=s;
+    }
 
     glm::vec3 translate() { return vec_translate; }
     glm::vec3 scale() { return vec_scale; }
     glm::mat4 rotate() { return mat_rotate; }
-
+    std::string getName(){return name;}
     glm::mat4 get_model_matrix();
 
 private:
 
-    GLuint  position_buffer; // GPU 메모리에서 vertices_buffer 위치 
+    std::string name;
+    GLuint  position_buffer; // GPU 메모리에서 vertices_buffer 위치
     GLuint  color_buffer;    // GPU 메모리에서 color_buffer 위치
+    GLuint index_buffer;
+    int num_indices=0;
     bool    is_color = false;
 
     std::vector<Face> faces;

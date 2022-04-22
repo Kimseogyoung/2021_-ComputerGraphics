@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 /// Model 관련 설정
 ////////////////////////////////////////////////////////////////////////////////
-enum MeshModel { kCube, kAvocado, kDonut }; 
+enum MeshModel { kCube, kAvocado, kDonut };
 enum MeshType { kTriangleSoup, kVlistTriangles };
 
 MeshModel g_mesh_model = kCube;
@@ -176,12 +176,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
   if (key == GLFW_KEY_1 && action == GLFW_PRESS)
   {
+
     g_mesh_model = kCube;
     g_mesh_type = kTriangleSoup;
     update_buffer_objects();
   }
   if (key == GLFW_KEY_2 && action == GLFW_PRESS)
   {
+
     g_mesh_model = kAvocado;
     g_mesh_type = kTriangleSoup;
     update_buffer_objects();
@@ -218,25 +220,101 @@ void update_buffer_objects()
   /// TODO: 아래 코드를 적절히 수정하여 프로그램을 완성하시오.
   /////////////////////////////////////////////////////////////////////
 
-  g_position_size = sizeof(cube::triangle_soup::position);
-  g_position_data = cube::triangle_soup::position;
 
-  g_color_size = sizeof(cube::triangle_soup::color);
-  g_color_data = cube::triangle_soup::color;
+  if(g_mesh_model==kCube && g_mesh_type == kTriangleSoup){
+    g_position_size = sizeof(cube::triangle_soup::position);
+    g_position_data = cube::triangle_soup::position;
+
+    g_color_size = sizeof(cube::triangle_soup::color);
+    g_color_data = cube::triangle_soup::color;
+
+
+    g_num_position = cube::triangle_soup::num_position;
+
+  }
+
+  else if(g_mesh_model==kAvocado && g_mesh_type == kTriangleSoup){
+    g_position_size = sizeof(avocado::triangle_soup::position);
+    g_position_data = avocado::triangle_soup::position;
+
+    g_color_size = sizeof(avocado::triangle_soup::color);
+    g_color_data = avocado::triangle_soup::color;
+
+
+    g_num_position = avocado::triangle_soup::num_position;
+
+  }
+  else if(g_mesh_model==kDonut && g_mesh_type == kTriangleSoup){
+    g_position_size = sizeof(donut::triangle_soup::position);
+    g_position_data = donut::triangle_soup::position;
+
+    g_color_size = sizeof(donut::triangle_soup::color);
+    g_color_data = donut::triangle_soup::color;
+
+
+    g_num_position = donut::triangle_soup::num_position;
+
+  }
+  else if(g_mesh_model==kCube && g_mesh_type == kVlistTriangles){
+    g_position_size = sizeof(cube::vlist_triangles::position);
+    g_position_data = cube::vlist_triangles::position;
+
+    g_color_size = sizeof(cube::vlist_triangles::color);
+    g_color_data = cube::vlist_triangles::color;
+
+    g_index_size=sizeof(cube::vlist_triangles::index);
+    g_index_data = cube::vlist_triangles::index;
+
+    g_num_index= cube::vlist_triangles::num_index;
+
+
+  }
+  else if(g_mesh_model==kAvocado && g_mesh_type == kVlistTriangles){
+    g_position_size = sizeof(avocado::vlist_triangles::position);
+    g_position_data = avocado::vlist_triangles::position;
+
+    g_color_size = sizeof(avocado::vlist_triangles::color);
+    g_color_data = avocado::vlist_triangles::color;
+
+    g_index_size=sizeof(avocado::vlist_triangles::index);
+    g_index_data = avocado::vlist_triangles::index;
+
+    g_num_index= avocado::vlist_triangles::num_index;
+
+  }
+  else if(g_mesh_model==kDonut && g_mesh_type == kVlistTriangles){
+    g_position_size = sizeof(donut::vlist_triangles::position);
+    g_position_data = donut::vlist_triangles::position;
+
+    g_color_size = sizeof(donut::vlist_triangles::color);
+    g_color_data = donut::vlist_triangles::color;
+
+    g_index_size=sizeof(donut::vlist_triangles::index);
+    g_index_data = donut::vlist_triangles::index;
+
+    g_num_index= donut::vlist_triangles::num_index;
+
+  }
 
   assert(g_position_size == g_color_size);
-  g_num_position = cube::triangle_soup::num_position;
-
 
   // VBO
-  glBindBuffer(GL_ARRAY_BUFFER, position_buffer); 
+  glBindBuffer(GL_ARRAY_BUFFER, position_buffer);
   glBufferData(GL_ARRAY_BUFFER, g_position_size, g_position_data, GL_STATIC_DRAW);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
   glBufferData(GL_ARRAY_BUFFER, g_color_size, g_color_data, GL_STATIC_DRAW);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   // IBO
   // ...
+  if(g_mesh_type==kVlistTriangles){
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, g_index_size, g_index_data, GL_STATIC_DRAW);
+  }
+
+
 
 }
 
@@ -253,10 +331,10 @@ void init_buffer_objects()
 
 }
 
-void set_transform() 
+void set_transform()
 {
   mat_view = glm::mat4(1.0f);
-  mat_proj = glm::mat4(1.0f); 
+  mat_proj = glm::mat4(1.0f);
 
   mat_model = glm::rotate(glm::mat4(1.0f), g_angle, glm::vec3(0.0f, 1.0f, 0.0f));
   mat_model = mat_model * glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f));
@@ -275,22 +353,32 @@ void render_object()
   /// TODO: 아래 코드를 적절히 수정하여 프로그램을 완성하세요.
   /////////////////////////////////////////////////////////////////////
 
-  // 앞으로 언급하는 배열 버퍼(GL_ARRAY_BUFFER)는 position_buffer로 지정
-  glBindBuffer(GL_ARRAY_BUFFER, position_buffer);
+
   // 버텍스 쉐이더의 attribute 중 a_position 부분 활성화
   glEnableVertexAttribArray(loc_a_position);
-  // 현재 배열 버퍼에 있는 데이터를 버텍스 쉐이더 a_position에 해당하는 attribute와 연결
-  glVertexAttribPointer(loc_a_position, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  // 앞으로 언급하는 배열 버퍼(GL_ARRAY_BUFFER)는 position_buffer로 지정
+  glBindBuffer(GL_ARRAY_BUFFER, position_buffer);
+    // 현재 배열 버퍼에 있는 데이터를 버텍스 쉐이더 a_position에 해당하는 attribute와 연결
+  glVertexAttribPointer(loc_a_position, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-  // 앞으로 언급하는 배열 버퍼(GL_ARRAY_BUFFER)는 color_buffer로 지정
-  glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
+
   // 버텍스 쉐이더의 attribute 중 a_color 부분 활성화
   glEnableVertexAttribArray(loc_a_color);
+  // 앞으로 언급하는 배열 버퍼(GL_ARRAY_BUFFER)는 color_buffer로 지정
+  glBindBuffer(GL_ARRAY_BUFFER, color_buffer);
   // 현재 배열 버퍼에 있는 데이터를 버텍스 쉐이더 a_color에 해당하는 attribute와 연결
-  glVertexAttribPointer(loc_a_color, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glVertexAttribPointer(loc_a_color, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 
-  glDrawArrays(GL_TRIANGLES, 0, g_num_position);
+
+
+
+  if(g_mesh_type==kVlistTriangles){
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+    glDrawElements(GL_TRIANGLES,g_num_index, GL_UNSIGNED_INT, (void*)0);
+  }else{
+    glDrawArrays(GL_TRIANGLES, 0, g_num_position/3);
+}
 
 
   // 정점 attribute 배열 비활성화
@@ -337,6 +425,7 @@ int main(void)
   // Loop until the user closes the window
   while (!glfwWindowShouldClose(window))
   {
+
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
